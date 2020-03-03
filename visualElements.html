@@ -1,0 +1,103 @@
+<html>
+
+	<head>
+		<script src="https://d3js.org/d3.v5.js"></script>
+		<title> D3 Tutorial </title>
+		
+		<style>
+		<!--specifies that our DIV and SVG elements takes the full width and height of the HTML window-->
+			div{
+				width: 100%;
+				height: 100%
+			}
+			svg{				
+				width: 100%;		
+				height: 100%; 
+			}
+			rect{
+				fill: gold;
+				stroke: #999999;
+				stroke-width: 2px;
+
+			}
+
+		</style>
+	</head>
+
+	<body>
+		<h2>D3 Visual Elements</h2>
+		
+
+		THE SHIRE#
+
+
+		<!--a new DIV element "myDiv" with a SVG element inside-->
+		<div id="myDiv">
+			<svg>
+			</svg>
+		</div>
+		
+		<script>
+		
+			var dataPath = "data/ecoFootprint.csv";	// our data file
+			
+			d3.csv(dataPath)							// loading our data
+				.then(function(myData){
+				
+				d3.select("svg")
+				.selectAll("rect")
+				.data(myData)
+				.enter()
+				.append("rect")
+					.attr("width", function(d){
+						return d.EcoFootprint*d.Population;
+					})
+					//.attr("width", 20)
+					.attr("height", 20)
+					.attr("x", 50)
+					.attr("y", function(d,i){
+						return i*50 + 50
+					})
+
+					.on("mouseenter", function(d,i){
+							d3.select(this)
+								.transition()
+								.duration(500)
+								.style("fill", "#FF9C00");
+							d3.select("svg")
+								.append("text")
+									.attr("class", "tooltip")
+									.attr("x",150)
+									.attr("y", i*50 + 50 + 15)
+									.text("Ecofootprint per person: " + d.EcoFootprint);
+					})
+					.on("mouseout", function(d){
+							d3.select(this)
+								.style("fill", "gold");
+							d3.selectAll(".tooltip")
+							.remove();
+					})
+
+					d3.select("svg")
+						.selectAll("text")
+						.data(myData)
+						.enter()
+						.append("text")
+							.attr("x", 20)
+							.attr("y", function(d,i){
+								return i*50 + 45;
+							})
+							.text(function(d){
+								return d.Country;
+							})
+
+			});
+			
+
+
+
+		</script>
+		
+	</body>
+
+</html>
